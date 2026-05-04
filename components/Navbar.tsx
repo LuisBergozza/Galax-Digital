@@ -1,0 +1,103 @@
+import React, { useState, useEffect } from 'react';
+import { Menu, X, ArrowRight } from 'lucide-react';
+import { Button } from './ui/Button';
+
+export const Navbar: React.FC = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const navLinks = [
+    { name: 'Soluções', href: '#servicos' },
+    { name: 'Diferenciais', href: '#diferenciais' },
+    { name: 'Resultados', href: '#depoimentos' },
+  ];
+
+  return (
+    <div className={`fixed top-0 left-0 right-0 z-50 flex justify-center px-4 transition-all duration-500 ${scrolled ? 'pt-2' : 'pt-4 md:pt-6'}`}>
+      <nav 
+        className={`
+          relative w-full max-w-5xl transition-all duration-500 ease-in-out
+          ${scrolled || isOpen ? 'bg-[#0A0A0A]/95 backdrop-blur-xl border border-white/10 shadow-[0_0_40px_-10px_rgba(83,0,255,0.3)]' : 'bg-transparent border border-transparent'}
+          rounded-2xl
+        `}
+      >
+        <div className={`px-4 md:px-6 flex justify-between items-center transition-all duration-500 ${scrolled ? 'py-2' : 'py-3 md:py-4'}`}>
+          {/* Logo */}
+          <a href="#" className="flex items-center group z-50">
+            <img 
+              src="/logo_navbar.png" 
+              alt="Galax Digital" 
+              className={`transition-all duration-500 object-contain block ${scrolled ? 'h-11' : 'h-12 md:h-14'}`}
+              style={{ verticalAlign: 'middle' }}
+            />
+          </a>
+
+          {/* Desktop Nav */}
+          <div className="hidden md:flex items-center gap-1">
+            <div className={`flex items-center bg-white/5 rounded-xl px-2 border border-white/5 mr-4 transition-all duration-500 ${scrolled ? 'py-0.5' : 'py-1'}`}>
+                {navLinks.map((link) => (
+                <a 
+                    key={link.name} 
+                    href={link.href} 
+                    className="relative px-5 py-2 text-sm font-medium text-gray-300 hover:text-white transition-colors rounded-lg hover:bg-white/5"
+                >
+                    {link.name}
+                </a>
+                ))}
+            </div>
+            <a href="#contato">
+              <Button size="sm" variant="primary" className={`rounded-lg transition-all duration-500 ${scrolled ? 'px-5' : 'px-6'}`}>
+                Falar com Especialista
+              </Button>
+            </a>
+          </div>
+
+          {/* Mobile Toggle */}
+          <button 
+            className="md:hidden text-white w-10 h-10 flex items-center justify-center rounded-lg hover:bg-white/10 transition-colors z-50 relative"
+            onClick={() => setIsOpen(!isOpen)}
+            aria-label="Menu"
+          >
+            {isOpen ? <X size={22} /> : <Menu size={22} />}
+          </button>
+        </div>
+
+        {/* Mobile Menu Dropdown */}
+        {isOpen && (
+          <div className="md:hidden px-4 pb-6 pt-2 animate-fade-in-down border-t border-white/5 mx-2">
+            <div className="flex flex-col gap-1">
+              {navLinks.map((link) => (
+                <a 
+                  key={link.name} 
+                  href={link.href} 
+                  className="flex items-center justify-between p-4 text-gray-300 hover:text-white hover:bg-white/5 rounded-xl transition-all border border-transparent hover:border-white/5 group active:bg-white/10"
+                  onClick={() => setIsOpen(false)}
+                >
+                  <span className="font-medium text-base">{link.name}</span>
+                  <ArrowRight size={16} className="text-primary opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                </a>
+              ))}
+              <a 
+                href="#contato" 
+                onClick={() => setIsOpen(false)}
+                className="mt-4 block"
+              >
+                <Button fullWidth className="rounded-xl py-4 text-base shadow-lg shadow-primary/20">
+                    Começar Agora
+                </Button>
+              </a>
+            </div>
+          </div>
+        )}
+      </nav>
+    </div>
+  );
+};
